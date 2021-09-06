@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
-const db = require("../db");
+const { sequelize } = require("../db");
 
-const Trip = db.define("trip", {
+const Trip = sequelize.define("trip", {
     tripName: {
         type: DataTypes.STRING(100),
         allowNull: false,
@@ -19,7 +19,7 @@ const Trip = db.define("trip", {
         type: DataTypes.STRING,
     },
     tripDestinations: {
-        type: DataTypes.ARRAY,
+        type: DataTypes.ARRAY(DataTypes.STRING),
         allowNull: false,
     },
 });

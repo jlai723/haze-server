@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
-const db = require("../db");
+const { sequelize } = require("../db");
 
-const Park = db.define("park", {
+const Park = sequelize.define("park", {
     parkName: {
         type: DataTypes.STRING,
     },
@@ -12,10 +12,10 @@ const Park = db.define("park", {
         type: DataTypes.DATE,
     },
     campground: {
-        type: DataTypes.ARRAY,
+        type: DataTypes.ARRAY(DataTypes.STRING),
     },
     place: {
-        type: DataTypes.ARRAY,
+        type: DataTypes.ARRAY(DataTypes.STRING),
     },
 })
 
