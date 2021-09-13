@@ -11,6 +11,7 @@ app.use(require('./middleware/headers'));
 
 app.use('/user', controllers.UserController);
 app.use('/trip', controllers.TripController);
+app.use('/park', controllers.ParkController);
 
 dbConnection.authenticate()
     .then(() => dbConnection.sync())
