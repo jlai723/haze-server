@@ -4,7 +4,7 @@ let validateJWT = require("../middleware/validate-jwt");
 const { UserModel, TripModel, ParkModel } = require("../models");
 
 // Create Park
-router.post("/create", validateJWT, async(req, res) => {
+router.post("/:tripId/create", validateJWT, async(req, res) => {
     const { parkName, parkStartDate, parkEndDate, campground, place } = req.body.park;
     const parkEntry = {
         parkName,
@@ -14,11 +14,13 @@ router.post("/create", validateJWT, async(req, res) => {
         place,
     };
     try {
-        let trip = await TripModel.findOne({ where: { id: req.trip.id }});
+        let trip = await TripModel.findOne({ where: { id: req.params.tripId }});
         if (trip) {
             const newPark = await ParkModel.create(parkEntry);
-            await newPark.setTrip(trip);
-            await trip.setPark(newPark);
+            // console.log(newPark);
+            // await newPark.setTrip(trip);
+            // await trip.setPark(newPark);
+            // await newParkInstance.setTrip(trip);
             res.status(200).json(newPark);
         } else {
             res.status(401).json({ Message: "Can't add park, trip does not exist" })
