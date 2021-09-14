@@ -16,11 +16,7 @@ const Trip = sequelize.define("trip", {
         type: DataTypes.STRING,
     },
     tripNotes: {
-        type: DataTypes.STRING,
-    },
-    tripDestinations: {
-        type: DataTypes.ARRAY(DataTypes.STRING),
-        allowNull: false,
+        type: DataTypes.TEXT,
     },
 });
 

@@ -74,4 +74,13 @@ router.post('/login', async (req, res) => {
     }
 });
 
+// Get User by Trip ID
+// router.get('/trip/:tId', async(req, res) => {
+//     try {
+
+//     } catch (err) {
+//         res.json({ Error: err })
+//     }
+// })
+
 module.exports = router;

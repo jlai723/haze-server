@@ -11,6 +11,9 @@ const Park = sequelize.define("park", {
     parkEndDate: {
         type: DataTypes.DATE,
     },
+    parkNotes: {
+        type: DataTypes.TEXT,
+    },
     campground: {
         type: DataTypes.ARRAY(DataTypes.STRING),
     },

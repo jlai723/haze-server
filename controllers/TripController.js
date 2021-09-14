@@ -4,18 +4,18 @@ let validateJWT = require("../middleware/validate-jwt");
 const { UserModel, TripModel, ParkModel } = require("../models");
 
 // Create Trip
-router.post("/create", validateJWT, async(req, res) => {
+router.post("/create", validateJWT, async (req, res) => {
     const { tripName, tripStartDate, tripEndDate, tripImage, tripNotes, tripDestinations } = req.body.trip;
     const tripEntry = {
         tripName,
         tripStartDate,
-        tripEndDate, 
+        tripEndDate,
         tripImage,
         tripNotes,
         tripDestinations,
     };
     try {
-        let user = await UserModel.findOne({ where: { id: req.user.id }});
+        let user = await UserModel.findOne({ where: { id: req.user.id } });
         if (user) {
             const newTrip = await TripModel.create(tripEntry);
             await newTrip.setUser(user);
@@ -28,34 +28,33 @@ router.post("/create", validateJWT, async(req, res) => {
     }
 });
 
-// Get All Trips by User
-router.get("/all/:id", validateJWT, async(req, res) => {
+// Get All Trips by User including all Parks of each Trip
+router.get("/:uId/all", validateJWT, async (req, res) => {
     try {
-        let user = await UserModel.findOne({ where: { id: req.params.id }});
-        let trips = user ? await user.getTrips() : null;
-        if (trips) {
-            let userTrips = trips.map((trip) => {
-                return trip;
-            })
-            res.send(userTrips);
-        } else {
-            res.send(trips);
-        }
+        let user = await UserModel.findOne({ where: { id: req.params.uId } });
+        let trips = user ? await TripModel.findAll({
+            where: {
+                userId: req.params.uId,
+            },
+            include: ParkModel,
+        }) : null;
+        res.status(200).json(trips);
     } catch (err) {
         res.status(500).json({ Error: err });
     }
 });
 
-// Get Trip for User by ID
-router.get("/:id", validateJWT, async(req, res) => {
-    const tripId = req.params.id;
-    const userId = req.user.id;
+// Get Single Trip for User including all Parks
+router.get("/:uId/:tId", validateJWT, async (req, res) => {
+    const tripId = req.params.tId;
+    const userId = req.params.uId;
     try {
         const singleTrip = await TripModel.findOne({
-            where: { 
+            where: {
                 id: tripId,
-                owner: userId,
-            }
+                userId: userId,
+            },
+            include: ParkModel,
         });
         res.status(200).json(singleTrip);
     } catch (err) {
@@ -64,15 +63,15 @@ router.get("/:id", validateJWT, async(req, res) => {
 });
 
 // Trip Update
-router.put("/:id", validateJWT, async(req, res) => {
+router.put("/:uId/update/:tId", validateJWT, async (req, res) => {
     const { tripName, tripStartDate, tripEndDate, tripImage, tripNotes, tripDestinations } = req.body.trip;
-    const tripId = req.params.id;
-    const userId = req.user.id;
+    const tripId = req.params.tId;
+    const userId = req.params.uId;
 
     const query = {
         where: {
             id: tripId,
-            owner: userId,
+            userId: userId,
         }
     };
 
@@ -83,6 +82,7 @@ router.put("/:id", validateJWT, async(req, res) => {
         tripImage: tripImage,
         tripNotes: tripNotes,
         tripDestinations: tripDestinations,
+        userId: userId,
     };
 
     try {
@@ -94,19 +94,19 @@ router.put("/:id", validateJWT, async(req, res) => {
 });
 
 // Trip Delete
-router.delete("/:id", validateJWT, async(req, res) => {
-    const tripId = req.params.id;
-    const userId = req.user.id;
+router.delete(":uId/delete/:tId", validateJWT, async (req, res) => {
+    const userId = req.params.uId;
+    const tripId = req.params.tId;
 
     try {
         const query = {
             where: {
                 id: tripId,
-                owner: userId,
             }
-        }
-        await TripModel.destroy(query);
-        res.status(200).json({ Message: "Trip Deleted" });
+        };
+        let user = await UserModel.findOne({ where: { id: userId } });
+        let deleted = user ? await TripModel.destroy(query) : null;
+        res.status(200).json({ deleted, Message: "Trip Deleted" });
     } catch (err) {
         res.status(500).json({ Error: err });
     }
