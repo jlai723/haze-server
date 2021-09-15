@@ -2,8 +2,9 @@ const router = require("express").Router();
 const { UniqueConstraintError } = require("sequelize/lib/errors");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+let validateJWT = require("../middleware/validate-jwt");
 
-const { UserModel } = require("../models");
+const { UserModel, TripModel, ParkModel, TripsParks } = require("../models");
 
 // User Register
 router.post('/register', async (req, res) => {
@@ -15,9 +16,10 @@ router.post('/register', async (req, res) => {
             username,
             email,
             password: bcrypt.hashSync(password, 13),
+            role,
         });
 
-        let token = jwt.sign({ id: User.id }, process.env.JWT_SECRET, { expiresIn: 60 * 60 * 24 });
+        let token = jwt.sign({ id: User.id, role: User.role }, process.env.JWT_SECRET, { expiresIn: 60 * 60 * 24 });
 
         res.status(201).json({
             message: "You are registered!",
@@ -51,7 +53,7 @@ router.post('/login', async (req, res) => {
             let passwordComparison = await bcrypt.compare(password, loginUser.password);
 
             if (passwordComparison) {
-                let token = jwt.sign( {id: loginUser.id }, process.env.JWT_SECRET, { expiresIn: 60 * 60 * 24 });
+                let token = jwt.sign( { id: loginUser.id, role: loginUser.role }, process.env.JWT_SECRET, { expiresIn: 60 * 60 * 24 });
                 res.status(200).json({
                     user: loginUser,
                     message: "Welcome back!",
@@ -74,13 +76,30 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Get User by Trip ID
-// router.get('/trip/:tId', async(req, res) => {
+// Get All Users - Admin Route
+// router.get('/:role', (req.params.role === 'basic' ? validateJWT : null), async(req, res) => {
 //     try {
-
+//         let users = await UserModel.findAll();
+//         res.status(200).json(users);
 //     } catch (err) {
-//         res.json({ Error: err })
+//         res.status(500).json({ Error: err });
 //     }
-// })
+// });
+
+// Get Specific User
+router.get('/:uId', validateJWT, async(req, res) => {
+    const userId = req.params.uId;
+    try {
+        const singleUser = await UserModel.findOne({
+            where: {
+                id: userId
+            },
+            include: TripModel,
+        })
+        res.status(200).json(singleUser);
+    } catch (err) {
+        res.status(500).json({ Error: err });
+    }
+});
 
 module.exports = router;

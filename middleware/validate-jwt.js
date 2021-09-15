@@ -30,6 +30,6 @@ const validateJWT = async (req, res, next) => {
     } else {
         res.status(403).send({ message: "Forbidden" });
     }
-}
+};
 
 module.exports = validateJWT;

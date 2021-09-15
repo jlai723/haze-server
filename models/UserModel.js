@@ -24,6 +24,10 @@ const User = sequelize.define("user", {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    role: {
+        type: DataTypes.ENUM('admin', 'basic'),
+        allowNull: false,
+    },
 });
 
 module.exports = User;
