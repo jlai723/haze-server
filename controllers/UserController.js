@@ -8,7 +8,7 @@ const { UserModel, TripModel, ParkModel, TripsParks } = require("../models");
 
 // User Register
 router.post('/register', async (req, res) => {
-    let { firstName, lastName, username, email, password } = req.body.user;
+    let { firstName, lastName, username, email, password, role } = req.body.user;
     try {
         const User = await UserModel.create({
             firstName,
