@@ -28,6 +28,22 @@ router.post("/create", validateJWT, async (req, res) => {
     }
 });
 
+// Get All Trips for Signed In User
+router.get("/all", validateJWT, async(req, res) => {
+    try {
+        let user = await UserModel.findOne({ where: { id: req.user.id } });
+        let trips = user ? await TripModel.findAll({
+            where: {
+                userId: req.user.id,
+            },
+            include: ParkModel,
+        }) : null;
+        res.status(200).json(trips);
+    } catch (err) {
+        res.status(500).json({ Error: err });
+    }
+})
+
 // Get All Trips by User including all Parks of each Trip
 router.get("/:uId/all", validateJWT, async (req, res) => {
     try {
@@ -39,6 +55,24 @@ router.get("/:uId/all", validateJWT, async (req, res) => {
             include: ParkModel,
         }) : null;
         res.status(200).json(trips);
+    } catch (err) {
+        res.status(500).json({ Error: err });
+    }
+});
+
+// Get Single Trip for Signed In User including all Parks
+router.get("/:tId", validateJWT, async (req, res) => {
+    const tripId = req.params.tId;
+    const userId = req.user.id;
+    try {
+        const singleTrip = await TripModel.findOne({
+            where: {
+                id: tripId,
+                userId: userId,
+            },
+            include: ParkModel,
+        });
+        res.status(200).json(singleTrip);
     } catch (err) {
         res.status(500).json({ Error: err });
     }
