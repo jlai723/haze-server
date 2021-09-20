@@ -5,14 +5,13 @@ const { UserModel, TripModel, ParkModel } = require("../models");
 
 // Create Trip
 router.post("/create", validateJWT, async (req, res) => {
-    const { tripName, tripStartDate, tripEndDate, tripImage, tripNotes, tripDestinations } = req.body.trip;
+    const { tripName, tripStartDate, tripEndDate, tripImage, tripNotes } = req.body.trip;
     const tripEntry = {
         tripName,
         tripStartDate,
         tripEndDate,
         tripImage,
         tripNotes,
-        tripDestinations,
     };
     try {
         let user = await UserModel.findOne({ where: { id: req.user.id } });
@@ -97,10 +96,10 @@ router.get("/:uId/:tId", validateJWT, async (req, res) => {
 });
 
 // Trip Update
-router.put("/:uId/update/:tId", validateJWT, async (req, res) => {
-    const { tripName, tripStartDate, tripEndDate, tripImage, tripNotes, tripDestinations } = req.body.trip;
+router.put("/update/:tId", validateJWT, async (req, res) => {
+    const { tripName, tripStartDate, tripEndDate, tripImage, tripNotes } = req.body.trip;
     const tripId = req.params.tId;
-    const userId = req.params.uId;
+    const userId = req.user.id;
 
     const query = {
         where: {
@@ -115,8 +114,6 @@ router.put("/:uId/update/:tId", validateJWT, async (req, res) => {
         tripEndDate: tripEndDate,
         tripImage: tripImage,
         tripNotes: tripNotes,
-        tripDestinations: tripDestinations,
-        userId: userId,
     };
 
     try {
@@ -128,8 +125,8 @@ router.put("/:uId/update/:tId", validateJWT, async (req, res) => {
 });
 
 // Trip Delete
-router.delete(":uId/delete/:tId", validateJWT, async (req, res) => {
-    const userId = req.params.uId;
+router.delete("/delete/:tId", validateJWT, async (req, res) => {
+    const userId = req.user.id;
     const tripId = req.params.tId;
 
     try {
