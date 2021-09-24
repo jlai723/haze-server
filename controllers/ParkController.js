@@ -5,10 +5,11 @@ const { UserModel, TripModel, ParkModel, TripsParks } = require("../models");
 
 // Create Park
 router.post("/:tId/create", validateJWT, async(req, res) => {
-    const { parkName, parkAddress, parkImage, parkStartDate, parkEndDate, parkNotes } = req.body.park;
+    const { parkName, parkAddress, parkCode, parkImage, parkStartDate, parkEndDate, parkNotes } = req.body.park;
     const parkEntry = {
         parkName,
         parkAddress,
+        parkCode,
         parkImage,
         parkStartDate,
         parkEndDate,
@@ -69,7 +70,7 @@ router.get("/:tId/:pId", validateJWT, async(req, res) => {
 
 // Park Update
 router.put("/:tId/update/:pId", validateJWT, async(req, res) => {
-    const { parkName, parkAddress, parkImage, parkStartDate, parkEndDate, parkNotes } = req.body.park;
+    const { parkName, parkAddress, parkCode, parkImage, parkStartDate, parkEndDate, parkNotes } = req.body.park;
     const tripId = req.params.tId;
     const parkId = req.params.pId;
 
@@ -82,6 +83,7 @@ router.put("/:tId/update/:pId", validateJWT, async(req, res) => {
     const updatedPark = {
         parkName: parkName,
         parkAddress: parkAddress,
+        parkCode: parkCode,
         parkImage: parkImage,
         parkStartDate: parkStartDate,
         parkEndDate: parkEndDate,

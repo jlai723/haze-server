@@ -8,6 +8,9 @@ const Park = sequelize.define("park", {
     parkAddress: {
         type: DataTypes.STRING,
     },
+    parkCode: {
+        type: DataTypes.STRING,
+    },
     parkImage: {
         type: DataTypes.STRING,
     },
