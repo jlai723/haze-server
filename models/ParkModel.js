@@ -5,6 +5,12 @@ const Park = sequelize.define("park", {
     parkName: {
         type: DataTypes.STRING,
     },
+    parkAddress: {
+        type: DataTypes.STRING,
+    },
+    parkImage: {
+        type: DataTypes.STRING,
+    },
     parkStartDate: {
         type: DataTypes.DATE,
     },
@@ -13,12 +19,6 @@ const Park = sequelize.define("park", {
     },
     parkNotes: {
         type: DataTypes.TEXT,
-    },
-    campground: {
-        type: DataTypes.ARRAY(DataTypes.STRING),
-    },
-    place: {
-        type: DataTypes.ARRAY(DataTypes.STRING),
     },
 })
 
