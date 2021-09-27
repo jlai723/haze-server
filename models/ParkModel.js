@@ -11,7 +11,13 @@ const Park = sequelize.define("park", {
     parkCode: {
         type: DataTypes.STRING,
     },
+    parkUrl: {
+        type: DataTypes.STRING,
+    },
     parkImage: {
+        type: DataTypes.STRING,
+    },
+    parkImageAlt: {
         type: DataTypes.STRING,
     },
     parkStartDate: {
