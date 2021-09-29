@@ -77,14 +77,32 @@ router.post('/login', async (req, res) => {
 });
 
 // Get All Users - Admin Route
-// router.get('/:role', (req.params.role === 'basic' ? validateJWT : null), async(req, res) => {
-//     try {
-//         let users = await UserModel.findAll();
-//         res.status(200).json(users);
-//     } catch (err) {
-//         res.status(500).json({ Error: err });
-//     }
-// });
+router.get('/all', validateJWT, async(req, res) => {
+    try {
+        let users = await UserModel.findAll();
+        res.status(200).json(users);
+    } catch (err) {
+        res.status(500).json({ Error: err });
+    }
+});
+
+// Delete a User - Admin Route
+router.delete('/delete/:uId', validateJWT, async(req, res) => {
+    const userId = req.params.uId;
+
+    try {
+        const query = {
+            where: {
+                id: userId,
+            }
+        };
+        let user = await UserModel.findOne({ query });
+        let deleted = user ? await UserModel.destroy(query) : null;
+        res.status(200).json({ deleted, Message: "User Deleted" });
+    } catch (err) {
+        res.status(500).json({ Error: err });
+    }
+})
 
 // Get Specific User
 router.get('/:uId', validateJWT, async(req, res) => {
